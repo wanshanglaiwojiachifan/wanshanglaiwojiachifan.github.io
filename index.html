@@ -2,10 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <link href="http://rockdai.u.qiniudn.com/font.css" rel="stylesheet" type="text/css">
   <script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
   <style>
     body {
-      background: #000;
+      background: #fff;
       width: 100%;
       height: 100%;
       padding: 0;
@@ -22,22 +23,27 @@
       position: absolute;
       width: 100%;
       margin: auto auto;
-      top: 62%;
+      top: 63%;
       text-align: center;
       /*display: none;*/
     }
 
-    #title h3 {
+    #title a {
+      text-decoration: none;
       margin: 0 auto;
       text-align: center;
-      font-size: 1.55em;
-      color: #eeeeee;
-      font-family: "League Gothic", Impact, sans-serif;
+      font-size: 2em;
+      color: rgb(194, 194, 194);
+      font-family: 'Open Sans', sans-serif;
       line-height: 1em;
       letter-spacing: 0.02em;
       text-transform: uppercase;
-      text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
+      text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.15);
       word-wrap: break-word;
+    }
+
+    #title a:hover{
+      color: rgb(226, 226, 226);
     }
   </style>
   <script>
@@ -47,15 +53,20 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       focallength = 200;
-      carNum = 1;
+      memberNum = 1;
       img = new Image();
-      memberList = ['rockdai', 'dead-horse', 'mimi', 'theseue', 'MissDora'];
+      memberList = [
+        {'nick': 'rockdai', 'link': 'https://github.com/rockdai'},
+        {'nick': 'dead-horse', 'link': 'https://github.com/dead-horse'},
+        {'nick': 'shadow吖', 'link': 'http://weibo.com/shadowhere'},
+        {'nick': 'theseue', 'link': 'https://github.com/theseue'},
+        {'nick': 'MissDora', 'link': 'https://github.com/MissDora'}];
 
       context.textAlign = "center";
       context.textBaseline = "middle";
-      context.font = "200px 微软雅黑";
-      context.fillStyle = "white";
-      context.fill();
+      context.font = '180px "Open Sans"';
+      // context.fillStyle = "white";
+      // context.fill();
       context.fillText("晚上来我家吃饭" , canvas.width/2 , canvas.height/2);
       var dots = getimgData();
       var pause = false;
@@ -90,7 +101,7 @@
               dot.x = dot.dx;
               dot.y = dot.dy;
               dot.z = dot.dz;
-              if (thisTime - lastTime > 300) {
+              if (thisTime - lastTime > 3000) {
                 derection = false;
                 $("#title").hide();
               }
@@ -101,7 +112,7 @@
               lastTime = +new Date();
             }
           } else {
-            if (thisTime - lastTime > 2000 && Math.abs(dot.tx - dot.x) < 1 && Math.abs(dot.ty - dot.y) < 1 && Math.abs(dot.tz - dot.z)<1) {
+            if (thisTime - lastTime > 2000 && Math.abs(dot.tx - dot.x) < 1 && Math.abs(dot.ty - dot.y) < 1 && Math.abs(dot.tz - dot.z) < 1) {
               pause = true;
             } else {
               dot.x = dot.x + (dot.tx - dot.x) * sulv;
@@ -131,10 +142,14 @@
             mozRequestAnimationFrame(animate);
           }
         } else {
+          var item = memberList[memberNum -1];
+          var str = '<h3><a href="$link" target="_blank">$nick</a></h3>';
+          str = str.replace('$link', item.link);
+          str = str.replace('$nick', item.nick);
+          $("#title").html(str);
           $("#title").show();
-          $("#title").html('<h3>' + memberList[carNum - 1] + '</h3>');
-          img.src = "images/car" + carNum + ".png";
-          carNum = carNum >= 5 ? 1 : carNum + 1;
+          img.src = "images/member" + memberNum + ".png";
+          memberNum = memberNum >= 5 ? 1 : memberNum + 1;
           derection = true;
           pause = false;
           if (img.complete) {
@@ -216,11 +231,11 @@
   </div>
   <div id='title'></div>
   <div style="display:none">
-    <img src="./images/car1.png" alt="" />
-    <img src="./images/car2.png" alt="" />
-    <img src="./images/car3.png" alt="" />
-    <img src="./images/car4.png" alt="" />
-    <img src="./images/car5.png" alt="" />
+    <img src="./images/member1.png" alt="" />
+    <img src="./images/member2.png" alt="" />
+    <img src="./images/member3.png" alt="" />
+    <img src="./images/member4.png" alt="" />
+    <img src="./images/member5.png" alt="" />
   </div>
 </body>
 </html>
