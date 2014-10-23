@@ -2,26 +2,43 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <script src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
   <style>
-      body{
-        padding:0;
-        margin:0;
-        overflow: hidden;
-      }
-    #cas{
+    body {
+      padding:0;
+      margin:0;
+      overflow: hidden;
+    }
+    #chart {
       display: block;
-      margin:auto;
+      margin: 0;
+      padding: 0;
+    }
+    #title {
+      position: absolute;
+      margin: 0 auto;
+      left: 45%;
+      top: 62%;
+      width: 200px;
+      display: none;
+    }
+
+    #title p {
+      margin: 0 auto;
+      text-align: center;
+      font: "12px 微软雅黑";
     }
   </style>
   <script>
     window.onload = function(){
-      canvas = document.getElementById("cas");
+      canvas = document.getElementById("chart");
       context = canvas.getContext('2d');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       focallength = 200;
       carNum = 1;
       img = new Image();
+      memberList = ['rockdai', 'dead-horse', 'mimi', 'theseue', 'MissDora'];
 
       context.textAlign = "center";
       context.textBaseline = "middle";
@@ -32,7 +49,7 @@
       initAnimate();
 
       function initAnimate(){
-        dots.forEach(function(){
+        dots.forEach(function() {
           this.x = getRandom(0 , canvas.width);
           this.y = getRandom(0 , canvas.height);
           this.z = getRandom(-focallength, focallength);
@@ -42,6 +59,7 @@
           this.tz = getRandom(-focallength, focallength);
           this.paint();
         });
+
         animate();
       }
 
@@ -50,25 +68,27 @@
       function animate(){
         animateRunning = true;
         var thisTime = +new Date();
-        context.clearRect(0,0,canvas.width , canvas.height);
+        context.clearRect(0, 0, canvas.width , canvas.height);
         var sulv = 0.1;
         dots.forEach(function(){
           var dot = this;
-          if(derection){
-            if (Math.abs(dot.dx - dot.x) < 0.1 && Math.abs(dot.dy - dot.y) < 0.1 && Math.abs(dot.dz - dot.z)<0.1) {
+          if (derection) {
+            if (Math.abs(dot.dx - dot.x) < 0.1 && Math.abs(dot.dy - dot.y) < 0.1 && Math.abs(dot.dz - dot.z) < 0.1) {
               dot.x = dot.dx;
               dot.y = dot.dy;
               dot.z = dot.dz;
-              if(thisTime - lastTime > 300) derection = false;
+              if (thisTime - lastTime > 300) {
+                derection = false;
+                $("#title").hide();
+              }
             } else {
               dot.x = dot.x + (dot.dx - dot.x) * sulv;
               dot.y = dot.y + (dot.dy - dot.y) * sulv;
               dot.z = dot.z + (dot.dz - dot.z) * sulv;
               lastTime = +new Date();
             }
-          }
-          else {
-            if (Math.abs(dot.tx - dot.x) < 1 && Math.abs(dot.ty - dot.y) < 1 && Math.abs(dot.tz - dot.z)<1) {
+          } else {
+            if (thisTime - lastTime > 2000 && Math.abs(dot.tx - dot.x) < 1 && Math.abs(dot.ty - dot.y) < 1 && Math.abs(dot.tz - dot.z)<1) {
               pause = true;
             } else {
               dot.x = dot.x + (dot.tx - dot.x) * sulv;
@@ -86,37 +106,37 @@
         })
         if(!pause) {
           if("requestAnimationFrame" in window){
-                        requestAnimationFrame(animate);
-                    }
-                    else if("webkitRequestAnimationFrame" in window){
-                        webkitRequestAnimationFrame(animate);
-                    }
-                    else if("msRequestAnimationFrame" in window){
-                        msRequestAnimationFrame(animate);
-                    }
-                    else if("mozRequestAnimationFrame" in window){
-                        mozRequestAnimationFrame(animate);
-                    }
-        }
-        else {
-          img.src = "images/car"+carNum+".png";
-          carNum = carNum >= 5? 1 : carNum+1;
-                  derection=true;
-                  pause = false;
-                  if(img.complete){
-                      context.clearRect(0,0,canvas.width,canvas.height);
-                      context.drawImage(img , canvas.width/2 - img.width/2 , canvas.height/2 - img.height/2);
-                      dots = getimgData();
-                      initAnimate();
-                  }
-                  else {
-                      img.onload = function(){
-                           context.clearRect(0,0,canvas.width,canvas.height);
-                          context.drawImage(img , canvas.width/2 - img.width/2 , canvas.height/2 - img.height/2);
-                          dots = getimgData();
-                          initAnimate();
-                      }
-                  }
+            requestAnimationFrame(animate);
+          }
+          else if("webkitRequestAnimationFrame" in window){
+            webkitRequestAnimationFrame(animate);
+          }
+          else if("msRequestAnimationFrame" in window){
+            msRequestAnimationFrame(animate);
+          }
+          else if("mozRequestAnimationFrame" in window){
+            mozRequestAnimationFrame(animate);
+          }
+        } else {
+          $("#title").show();
+          $("#title").html('<p>' + memberList[carNum - 1] + '</p>');
+          img.src = "images/car" + carNum + ".png";
+          carNum = carNum >= 5 ? 1 : carNum + 1;
+          derection = true;
+          pause = false;
+          if (img.complete) {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(img , canvas.width/2 - img.width/2 , canvas.height/2 - img.height/2);
+            dots = getimgData();
+            initAnimate();
+          } else {
+            img.onload = function () {
+              context.clearRect(0, 0, canvas.width, canvas.height);
+              context.drawImage(img , canvas.width/2 - img.width/2 , canvas.height/2 - img.height/2);
+              dots = getimgData();
+              initAnimate();
+            }
+          }
         }
       }
     }
@@ -128,22 +148,23 @@
     }
 
     function getRandom(a , b){
-      return Math.random()*(b-a) + a
+      return Math.random()*(b-a) + a;
     }
 
     function getimgData(){
-      var imgData = context.getImageData(0,0,canvas.width , canvas.height);
-      context.clearRect(0,0,canvas.width , canvas.height);
+      var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+      context.clearRect(0 ,0 ,canvas.width, canvas.height);
       var dots = [];
-      for(var x=0;x<imgData.width;x+=4){
-        for(var y=0;y<imgData.height;y+=4){
-          var i = (y*imgData.width + x)*4;
-          if(imgData.data[i+3] > 128){
-            var dot = new Dot(x-2 , y-2 , 0 , 2 , {a:imgData.data[i] , b:imgData.data[i+1] , c:imgData.data[i+2]});
+      for (var x = 0; x < imgData.width; x += 4) {
+        for (var y = 0; y < imgData.height; y += 4) {
+          var i = (y * imgData.width + x) * 4;
+          if(imgData.data[i + 3] > 128){
+            var dot = new Dot(x - 2 , y - 2 , 0 , 2 , {a: imgData.data[i] , b: imgData.data[i + 1] , c: imgData.data[i + 2]});
             dots.push(dot);
           }
         }
       }
+
       return dots;
     }
 
@@ -162,11 +183,11 @@
     }
 
     Dot.prototype = {
-      paint:function(){
+      paint : function () {
         context.save();
         context.beginPath();
         var scale = focallength/(focallength + this.z);
-        context.arc(canvas.width/2 + (this.x-canvas.width/2)*scale , canvas.height/2 + (this.y-canvas.height/2) * scale, this.radius*scale , 0 , 2*Math.PI);
+        context.arc(canvas.width/2 + (this.x - canvas.width / 2) * scale , canvas.height/2 + (this.y-canvas.height/2) * scale, this.radius * scale , 0 , 2 * Math.PI);
         context.fillStyle = "rgba("+this.color.a+","+this.color.b+","+this.color.c+","+ scale +")";
         context.fill()
         context.restore();
@@ -177,15 +198,16 @@
   <title>晚上来我家吃饭</title>
 </head>
 <body>
-  <div >
-    <canvas id='cas' width="1200" height="800">浏览器不支持canvas</canvas>
+  <div>
+    <canvas id='chart' style=" height: 100%;width: 100%;">浏览器不支持canvas</canvas>
   </div>
+  <div id='title'></div>
   <div style="display:none">
     <img src="./images/car1.png" alt="" />
     <img src="./images/car2.png" alt="" />
     <img src="./images/car3.png" alt="" />
     <img src="./images/car4.png" alt="" />
-    <img src="./images/car5.jpg" alt="" />
+    <img src="./images/car5.png" alt="" />
   </div>
 </body>
 </html>
